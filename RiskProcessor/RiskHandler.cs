@@ -31,6 +31,7 @@ namespace RiskProcessor
         private void PrintDiagram(Diagram diag)
         {
             Char[] charOut = System.Text.Encoding.Default.GetChars(diag.DiagBody);
+            log.Info(charOut);
             System.Console.WriteLine(charOut);
         }
     }

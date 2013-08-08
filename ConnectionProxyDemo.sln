@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectionProxyDemo", "Conn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiskProcessor", "RiskProcessor\RiskProcessor.csproj", "{5B6E962C-8D06-4DCA-834A-F5617B3946AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectionProxyDemoGUI", "ConnectionProxyDemoGUI\ConnectionProxyDemoGUI.csproj", "{F8DE297A-FB76-4A56-9E2C-C6AEA49CD2A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{5B6E962C-8D06-4DCA-834A-F5617B3946AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B6E962C-8D06-4DCA-834A-F5617B3946AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B6E962C-8D06-4DCA-834A-F5617B3946AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8DE297A-FB76-4A56-9E2C-C6AEA49CD2A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8DE297A-FB76-4A56-9E2C-C6AEA49CD2A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8DE297A-FB76-4A56-9E2C-C6AEA49CD2A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8DE297A-FB76-4A56-9E2C-C6AEA49CD2A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

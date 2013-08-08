@@ -12,6 +12,8 @@ namespace ConnectionProxyDemo.Proxy
     {
         private static ILog log = LoggingManager.GetLoggerForClass();
 
+        private Boolean passiveConnection;
+
         private Socket outConnection;
 
         private Socket inConnection;
@@ -26,21 +28,40 @@ namespace ConnectionProxyDemo.Proxy
         
         private Byte[] receiveBuffer;
 
-        private volatile ConcurrentQueue<Diagram> sendQueue;
+        private volatile DiagramContainer sendQueue;
 
-        private volatile ConcurrentQueue<Diagram> receiveQueue;
+        private volatile DiagramContainer receiveQueue;
 
-        //public String Name { get, set,};
+        private IPEndPoint outEndPoint;
+
+        private IPEndPoint inEndPoint;
 
         DiagramHandler handler;
 
-        public SocketConnection(String ServerAddress, Int32 ServerPort)
+        public SocketConnection(String ServerAddress, Int32 ServerPort, Boolean passive, DiagramContainer inContainer, DiagramContainer outContainer, DiagramHandler diagHandler)
         {
             try
             {
+                handler = diagHandler;
+
+                sendQueue = outContainer;
+                receiveQueue = inContainer;
+
                 outAddress = IPAddress.Parse(ServerAddress);
-                IPEndPoint ipEP = new IPEndPoint(outAddress, ServerPort);
-                outConnection = new Socket(ipEP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                outEndPoint = new IPEndPoint(outAddress, ServerPort);
+                outConnection = new Socket(outEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                
+                inEndPoint = new IPEndPoint(IPAddress.Loopback, ServerPort);
+                inConnection = new Socket(inEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                inConnection.Bind(inEndPoint);
+
+                Thread inThread = new Thread(StartInConnection);
+                inThread.Start();
+
+                Thread outThread = new Thread(StartOutConnection);
+                outThread.Start(outEndPoint);
+
+
             }
             catch (FormatException formatEx)
             {
@@ -52,10 +73,9 @@ namespace ConnectionProxyDemo.Proxy
             }
         }
 
-        private void InitSocket()
+        private void StartPassiveConnection()
         {
-            sendQueue = new ConcurrentQueue<Diagram>();
-            receiveQueue = new ConcurrentQueue<Diagram>();
+
         }
 
         public void SendOutData()
@@ -64,29 +84,13 @@ namespace ConnectionProxyDemo.Proxy
             Byte[] toSendByte;
             while (sending)
             {
-                
-                if (sendQueue.TryDequeue(out toSendDiagram))
+                toSendDiagram = sendQueue.GetDiagram();
+                if (true == toSendDiagram.needSend)
                 {
                     toSendByte = toSendDiagram.DiagBody;
                     Monitor.Enter(outConnection);
                     outConnection.Send(toSendByte, SocketFlags.None);
                     Monitor.Exit(outConnection);
-                }
-            }
-        }
-
-        public void SendInData()
-        {
-            Diagram toSendDiagram;
-            Byte[] toSendByte;
-            while (sending)
-            {
-                if (receiveQueue.TryDequeue(out toSendDiagram))
-                {
-                    toSendByte = toSendDiagram.DiagBody;
-                    Monitor.Enter(inConnection);
-                    inConnection.Send(toSendByte, SocketFlags.None);
-                    Monitor.Exit(inConnection);
                 }
             }
         }
@@ -104,38 +108,52 @@ namespace ConnectionProxyDemo.Proxy
                 recDiag = handler.Handle(recDiag);
                 if (recDiag.needSend)
                 {
-                    sendQueue.Enqueue(recDiag);
+                    receiveQueue.AddDiagram(recDiag);
                 }
             }
         }
 
-        public void ReceiveOutData()
+        public void StopReceive()
         {
-            Diagram recDiag;
-            Int32 receivedLength;
-            while (receiving)
+            receiving = false;
+        }
+
+        public void StopSend()
+        {
+            sending = false;
+        }
+
+        public void BreakInConnection()
+        {
+            inConnection.Close();
+        }
+
+        public void BreakOutConnection()
+        {
+            outConnection.Close();
+        }
+
+        public void StartInConnection()
+        {
+            inConnection.Accept();
+            ReceiveInData();
+        }
+
+        public void StartOutConnection()
+        {
+            try
             {
-                Monitor.Enter(outConnection);
-                receivedLength = outConnection.Receive(receiveBuffer);
-                Monitor.Exit(outConnection);
-                recDiag = new Diagram(receivedLength, receiveBuffer);
-                recDiag = handler.Handle(recDiag);
-                if (recDiag.needSend)
-                {
-                    receiveQueue.Enqueue(recDiag);
-                }
+                outConnection.Connect(outEndPoint);
+                SendOutData();
+            }
+            catch (ArgumentNullException nullEx)
+            {
+                log.Error(nullEx.Message);
+            }
+            catch (SocketException socketEx)
+            {
+                log.Error(socketEx.Message);
             }
         }
-
-        public Int32 CheckReceivedQueue()
-        {
-            return receiveQueue.Count;
-        }
-
-        public Int32 CheckSendQueue()
-        {
-            return sendQueue.Count;
-        }
-
     }
 }

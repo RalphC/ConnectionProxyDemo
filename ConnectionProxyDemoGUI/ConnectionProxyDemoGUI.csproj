@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{864C9C62-5A7E-4749-B453-0A4A70EAEF6C}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{F8DE297A-FB76-4A56-9E2C-C6AEA49CD2A2}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ConnectionProxyDemo</RootNamespace>
-    <AssemblyName>ConnectionProxyDemo</AssemblyName>
+    <RootNamespace>ConnectionProxyDemoGUI</RootNamespace>
+    <AssemblyName>ConnectionProxyDemoGUI</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,31 +32,58 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net">
-      <HintPath>..\..\NetMeter\NetMeter\Lib\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectionProxyDemo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConnectionProxyDemo.Designer.cs">
+      <DependentUpon>ConnectionProxyDemo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProxyLib\LoggingManager.cs" />
-    <Compile Include="Proxy\ConcurrentDiagramContainer.cs" />
-    <Compile Include="Proxy\Diagram.cs" />
-    <Compile Include="Proxy\DiagramContainer.cs" />
-    <Compile Include="Proxy\DiagramProcessor.cs" />
-    <Compile Include="Proxy\SocketConnection.cs" />
+    <EmbeddedResource Include="ConnectionProxyDemo.resx">
+      <DependentUpon>ConnectionProxyDemo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <ProjectReference Include="..\ConnectionProxyDemo\ConnectionProxyDemo.csproj">
+      <Project>{864c9c62-5a7e-4749-b453-0a4a70eaef6c}</Project>
+      <Name>ConnectionProxyDemo</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RiskProcessor\RiskProcessor.csproj">
+      <Project>{5b6e962c-8d06-4dca-834a-f5617b3946ae}</Project>
+      <Name>RiskProcessor</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
